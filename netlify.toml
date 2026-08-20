@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Static export emits /404.html; point Netlify's 404 at it explicitly.
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    cache-control = "public, max-age=31536000, immutable"

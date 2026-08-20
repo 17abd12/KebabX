@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * The storefront is a single prerendered route with no server work — no API
+   * routes, no middleware, no dynamic rendering. Exporting to plain HTML means
+   * any static host (Netlify, Pages, S3) serves it without a Next.js adapter.
+   */
+  output: "export",
+
   images: {
+    // Static export has no image optimizer at runtime, so serve the Unsplash
+    // URLs directly instead of routing them through /_next/image.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -9,7 +19,6 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    formats: ["image/avif", "image/webp"],
   },
 };
 
