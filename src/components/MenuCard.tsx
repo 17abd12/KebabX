@@ -51,7 +51,10 @@ function SpiceMeter({ level }: { level: number }) {
         <Flame
           key={step}
           aria-hidden
-          className={cn("size-3.5", step <= level ? "fill-chilli/80 text-chilli" : "text-zinc-700")}
+          className={cn(
+            "size-3.5",
+            step <= level ? "fill-chilli/80 text-chilli" : "text-zinc-700",
+          )}
         />
       ))}
     </span>
@@ -59,7 +62,13 @@ function SpiceMeter({ level }: { level: number }) {
 }
 
 /** Button that drifts a few pixels toward the cursor while hovered. */
-function MagneticAdd({ onClick, label }: { onClick: () => void; label: string }) {
+function MagneticAdd({
+  onClick,
+  label,
+}: {
+  onClick: () => void;
+  label: string;
+}) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 300, damping: 18 });
@@ -100,7 +109,11 @@ export function MenuCard({ item, index }: { item: MenuItem; index: number }) {
       initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12, scale: 0.97 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.035, 0.28), ease: [0.16, 1, 0.3, 1] }}
+      transition={{
+        duration: 0.35,
+        delay: Math.min(index * 0.035, 0.28),
+        ease: [0.16, 1, 0.3, 1],
+      }}
     >
       <TiltCard intensity={7} lift={10} className="h-full">
         <div
@@ -119,6 +132,7 @@ export function MenuCard({ item, index }: { item: MenuItem; index: number }) {
               alt={item.name}
               fill
               sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 30vw"
+              showFallbackLabel
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.07]"
             />
             <div className="absolute inset-0 bg-linear-to-t from-obsidian/95 via-obsidian/20 to-transparent" />

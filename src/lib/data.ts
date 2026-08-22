@@ -20,6 +20,27 @@ export const STORE = {
   gstRate: 0.1,
 } as const;
 
+/**
+ * Third-party delivery apps. Brand hexes are used as accents only — the sheet
+ * itself stays on the obsidian/ember palette so it reads as part of the site.
+ */
+export const DELIVERY_PARTNERS = [
+  {
+    id: "ubereats",
+    name: "Uber Eats",
+    tint: "#06C167",
+    eta: "30–45 mins",
+    href: "https://www.ubereats.com/au/search?q=Kebab%20X%20Clayton",
+  },
+  {
+    id: "doordash",
+    name: "DoorDash",
+    tint: "#FF3008",
+    eta: "35–50 mins",
+    href: "https://www.doordash.com/search/store/Kebab%20X%20Clayton",
+  },
+] as const;
+
 export const CATEGORIES: Category[] = [
   {
     key: "kebabs",
@@ -28,8 +49,9 @@ export const CATEGORIES: Category[] = [
   },
   {
     key: "hsp",
-    label: "Halal Snack Packs",
-    blurb: "Chips, cheese and the holy trinity — garlic, BBQ, chilli.",
+    label: "Halal Snack Packs (HSP)",
+    blurb:
+      "The Aussie classic — halal doner over chips and cheese, hit with the holy trinity: garlic, BBQ, chilli.",
   },
   {
     key: "platters",
@@ -49,11 +71,24 @@ export const CATEGORIES: Category[] = [
 ];
 
 /**
- * Placeholder photography. Every id below was checked to resolve on
- * images.unsplash.com — swap them for real store shots before launch.
+ * Real store photography, cropped out of the supplied app screenshots and
+ * served locally from /public/menu. The source frames are 739px wide, so these
+ * are kept at native size rather than upscaled into fake detail.
+ */
+const shot = (slug: string) => `/menu/${slug}.webp`;
+
+/**
+ * Placeholder photography for dishes we have no store photo of yet. Every id
+ * below was checked to resolve on images.unsplash.com.
  */
 const img = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=80`;
+
+/** Background-removed product cutouts, used floating on the dark hero. */
+export const CUTOUTS = {
+  hsp: "/menu/cutout-hsp.webp",
+  kebab: "/menu/cutout-kebab.webp",
+} as const;
 
 /* ---------------------------------------------------------------------------
  * Reusable customization groups. Options are cloned per item so item-level
@@ -164,7 +199,7 @@ export const MENU: MenuItem[] = [
       "Twelve-hour marinated lamb carved straight off the spit, packed into grill-pressed pita with crisp salad and garlic sauce.",
     price: 16.5,
     category: "kebabs",
-    image: img("1529006557810-274b9b2fc783"),
+    image: shot("lamb-doner-kebab"),
     ingredients: [
       "Lamb doner",
       "Warm pita",
@@ -208,7 +243,7 @@ export const MENU: MenuItem[] = [
       "Lamb and chicken stacked together in Turkish bread with pickled chillies, tahini and a smoky BBQ finish.",
     price: 17.5,
     category: "kebabs",
-    image: img("1561651823-34feb02250e4"),
+    image: shot("kebab-tight"),
     ingredients: [
       "Lamb doner",
       "Chicken doner",
@@ -236,7 +271,6 @@ export const MENU: MenuItem[] = [
       "Crunchy chickpea falafel with seared halloumi, pickled turnip and a heavy pour of homestyle tahini.",
     price: 15.0,
     category: "kebabs",
-    image: img("1540189549336-e6e99c3679fe"),
     ingredients: ["Falafel", "Grilled halloumi", "Pickled turnip", "Rocket", "Tahini", "Warm pita"],
     tags: ["Vegetarian", "Halal Certified"],
     spice: 0,
@@ -257,6 +291,48 @@ export const MENU: MenuItem[] = [
     ],
   },
 
+  {
+    id: "kebab-combo",
+    name: "Kebab, Large Chips & Drink",
+    description:
+      "The full feed — any doner kebab wrapped hot, a large serve of chips and an ice-cold drink of your choice.",
+    price: 26.9,
+    category: "kebabs",
+    image: shot("kebab-combo"),
+    ingredients: [
+      "Doner kebab",
+      "Large hand-cut chips",
+      "Cold drink",
+      "Salad",
+      "Garlic sauce",
+    ],
+    tags: ["Halal Certified"],
+    spice: 1,
+    kj: 5860,
+    featured: true,
+    popular: true,
+    customization: [
+      g(meatGroup),
+      g(breadGroup),
+      g(saladGroup),
+      g(sauceGroup),
+      {
+        id: "drink",
+        title: "Pick your drink",
+        type: "single",
+        min: 1,
+        options: [
+          { id: "coke", label: "Coca-Cola 375ml", price: 0, default: true },
+          { id: "cokezero", label: "Coke Zero 375ml", price: 0 },
+          { id: "lemonade", label: "Calypso Lemonade", price: 1.5, note: "Apple melon" },
+          { id: "ayran", label: "Salted Ayran 300ml", price: 1.0 },
+          { id: "water", label: "Sparkling Water", price: 0 },
+        ],
+      },
+      g(addonGroup),
+    ],
+  },
+
   /* ------------------------------ Snack Packs ------------------------------ */
   {
     id: "classic-hsp",
@@ -265,7 +341,7 @@ export const MENU: MenuItem[] = [
       "Golden chips, melted cheese and a mountain of doner, hit with the holy trinity — garlic, BBQ and chilli.",
     price: 18.5,
     category: "hsp",
-    image: img("1571091718767-18b5b1457add"),
+    image: shot("hsp-classic"),
     ingredients: [
       "Hand-cut chips",
       "Melted cheese",
@@ -296,7 +372,7 @@ export const MENU: MenuItem[] = [
       "Beast mode — double meat, double cheese, jalapeños and a fried egg on top. Feeds one very brave human.",
     price: 24.9,
     category: "hsp",
-    image: img("1550547660-d9450f859349"),
+    image: shot("hsp-large"),
     ingredients: [
       "Double doner",
       "Double cheese",
@@ -325,7 +401,7 @@ export const MENU: MenuItem[] = [
       "Lighter, lemony chicken doner over crisp chips with garlic and sweet chilli. The everyday order.",
     price: 18.0,
     category: "hsp",
-    image: img("1552611052-33e04de081de"),
+    image: shot("hsp-chicken"),
     ingredients: ["Chicken doner", "Hand-cut chips", "Cheese", "Garlic sauce", "Sweet chilli"],
     tags: ["Halal Certified"],
     spice: 1,
@@ -345,7 +421,6 @@ export const MENU: MenuItem[] = [
       "Lamb skewers, chicken shish and doner over saffron rice with grilled chilli, tomato and a trio of dips. Shares between two.",
     price: 38.9,
     category: "platters",
-    image: img("1544025162-d76694265947"),
     ingredients: [
       "Lamb skewer",
       "Chicken shish",
@@ -395,7 +470,6 @@ export const MENU: MenuItem[] = [
       "Two skewers of char-grilled thigh fillet with smoked paprika, saffron rice, grilled veg and garlic yoghurt.",
     price: 26.5,
     category: "platters",
-    image: img("1600891964092-4316c288032e"),
     ingredients: [
       "Chicken thigh skewers",
       "Smoked paprika",
@@ -435,7 +509,6 @@ export const MENU: MenuItem[] = [
       "Hand-cut chips under molten cheese, chilli oil, spring onion and a garlic drizzle. The table killer.",
     price: 12.5,
     category: "sides",
-    image: img("1585032226651-759b368d7246"),
     ingredients: ["Hand-cut chips", "Mozzarella", "Chilli oil", "Spring onion", "Garlic drizzle"],
     tags: ["Vegetarian", "Spicy"],
     spice: 2,
@@ -460,7 +533,6 @@ export const MENU: MenuItem[] = [
       "Hummus, baba ghanoush and whipped garlic toum, whisked daily, with a stack of blistered pita.",
     price: 11.9,
     category: "sides",
-    image: img("1541592106381-b31e9677c0e5"),
     ingredients: ["Hummus", "Baba ghanoush", "Garlic toum", "Olive oil", "Sumac", "Blistered pita"],
     tags: ["Vegetarian", "Vegan", "Halal Certified"],
     spice: 0,
@@ -494,7 +566,6 @@ export const MENU: MenuItem[] = [
       "Eight herb-flecked chickpea bites fried to order, dusted with sumac and served with tahini.",
     price: 10.5,
     category: "sides",
-    image: img("1593560708920-61dd98c46a4e"),
     ingredients: ["Chickpea falafel", "Parsley", "Coriander", "Sumac", "Tahini"],
     tags: ["Vegetarian", "Vegan", "Halal Certified"],
     spice: 0,
@@ -510,6 +581,43 @@ export const MENU: MenuItem[] = [
     ],
   },
 
+  {
+    id: "gozleme-three-cheese",
+    name: "Three Cheese Gozleme",
+    description:
+      "Hand-rolled Turkish flatbread stuffed with three cheeses and parsley, griddled until blistered and cut into wedges.",
+    price: 14.5,
+    category: "sides",
+    image: shot("gozleme-three-cheese"),
+    ingredients: ["Hand-rolled dough", "Fetta", "Mozzarella", "Kasar cheese", "Parsley", "Lemon"],
+    tags: ["Vegetarian", "Halal Certified"],
+    spice: 0,
+    kj: 2960,
+    popular: true,
+    customization: [
+      {
+        id: "meat",
+        title: "Choose your filling",
+        type: "single",
+        min: 1,
+        options: [
+          { id: "threecheese", label: "Three Cheese", price: 0, default: true, note: "Vegetarian" },
+          { id: "spinach", label: "Spinach & Fetta", price: 0 },
+          { id: "lamb", label: "Lamb Mince & Cheese", price: 3.0 },
+          { id: "chicken", label: "Chicken & Cheese", price: 3.0 },
+        ],
+      },
+      g(sauceGroup, { title: "Serve with", description: "Pick up to 3." }),
+      g(addonGroup, {
+        options: [
+          { id: "egg", label: "Add Fried Egg", price: 2.0 },
+          { id: "chilli", label: "Chilli Flakes", price: 0 },
+          { id: "saucetub", label: "Extra Sauce Tub", price: 1.0 },
+        ],
+      }),
+    ],
+  },
+
   /* -------------------------- Drinks & Desserts ---------------------------- */
   {
     id: "baklava",
@@ -518,7 +626,6 @@ export const MENU: MenuItem[] = [
       "Layered filo, crushed Antep pistachio and orange-blossom syrup. Cut fresh, never soggy.",
     price: 9.5,
     category: "drinks",
-    image: img("1519676867240-f03562e64548"),
     ingredients: ["Filo pastry", "Antep pistachio", "Butter", "Orange blossom syrup"],
     tags: ["Vegetarian"],
     spice: 0,
@@ -536,13 +643,48 @@ export const MENU: MenuItem[] = [
     ],
   },
   {
+    id: "mini-churros",
+    name: "15x Mini Churros",
+    description:
+      "Fifteen cinnamon-sugar churros fried to order, dusted with icing sugar and served with warm chocolate sauce.",
+    price: 11.9,
+    category: "drinks",
+    image: shot("mini-churros"),
+    ingredients: ["Mini churros", "Cinnamon sugar", "Icing sugar", "Chocolate dipping sauce"],
+    tags: ["Vegetarian"],
+    spice: 0,
+    kj: 2540,
+    popular: true,
+    customization: [
+      {
+        id: "sauces",
+        title: "Dipping sauce",
+        description: "Pick up to 2.",
+        type: "multi",
+        max: 2,
+        options: [
+          { id: "chocolate", label: "Warm Chocolate", price: 0, default: true },
+          { id: "caramel", label: "Salted Caramel", price: 0 },
+          { id: "nutella", label: "Nutella", price: 1.5 },
+          { id: "pistachio", label: "Pistachio Cream", price: 2.0 },
+        ],
+      },
+      g(comboGroup, {
+        title: "Make it bigger",
+        options: [
+          { id: "thirty", label: "Upgrade to 30pc", price: 9.0 },
+          { id: "icecream", label: "Add Vanilla Ice Cream", price: 3.5 },
+        ],
+      }),
+    ],
+  },
+  {
     id: "cold-drinks",
     name: "Cold Drinks & Ayran",
     description:
       "Ice-cold cans, Turkish salted ayran and sparkling water — straight out of the back fridge.",
     price: 4.0,
     category: "drinks",
-    image: img("1517686469429-8bdb88b9f907"),
     ingredients: ["Soft drink cans", "Salted ayran", "Sparkling water"],
     tags: ["Vegetarian", "Halal Certified"],
     spice: 0,

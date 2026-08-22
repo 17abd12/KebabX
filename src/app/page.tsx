@@ -1,5 +1,6 @@
 import { CartDrawer } from "@/components/CartDrawer";
 import { CustomizeModal } from "@/components/CustomizeModal";
+import { DeliveryPartnerSheet } from "@/components/DeliveryPartnerSheet";
 import { FloatingCartBar } from "@/components/FloatingCartBar";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
@@ -20,6 +21,7 @@ export default function Home() {
 
       {/* Overlays */}
       <CustomizeModal />
+      <DeliveryPartnerSheet />
       <CartDrawer />
       <OrderConfirmation />
       <FloatingCartBar />

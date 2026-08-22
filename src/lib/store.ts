@@ -36,6 +36,7 @@ interface CartState {
   customizingId: string | null;
   confirmationOpen: boolean;
   activeCategory: CategoryFilter;
+  partnerSheetOpen: boolean;
   toast: string | null;
   hasHydrated: boolean;
 
@@ -51,6 +52,8 @@ interface CartState {
   openCustomize: (itemId: string) => void;
   closeCustomize: () => void;
   setActiveCategory: (category: CategoryFilter) => void;
+  openPartnerSheet: () => void;
+  closePartnerSheet: () => void;
   showToast: (message: string) => void;
   clearToast: () => void;
   placeOrder: () => PlacedOrder | null;
@@ -103,10 +106,23 @@ export const useCartStore = create<CartState>()(
       customizingId: null,
       confirmationOpen: false,
       activeCategory: "all",
+      partnerSheetOpen: false,
       toast: null,
       hasHydrated: false,
 
-      setOrderType: (orderType) => set({ orderType }),
+      setOrderType: (orderType) =>
+        set((state) =>
+          // No-op when the mode is already active, so tapping "Delivery" inside
+          // the partner sheet does not dismiss the sheet it lives in.
+          state.orderType === orderType
+            ? {}
+            : {
+                orderType,
+                // Offer Uber Eats / DoorDash whenever delivery is newly chosen;
+                // switching back to pickup closes the sheet in the same update.
+                partnerSheetOpen: orderType === "delivery",
+              },
+        ),
 
       addItem: (item, selections, quantity = 1, notes) => {
         const lineId = lineSignature(item.id, selections);
@@ -160,6 +176,10 @@ export const useCartStore = create<CartState>()(
       openCustomize: (customizingId) => set({ customizingId }),
       closeCustomize: () => set({ customizingId: null }),
       setActiveCategory: (activeCategory) => set({ activeCategory }),
+      // Reachable entry point for visitors who already had delivery selected,
+      // since the automatic prompt only fires when the mode actually changes.
+      openPartnerSheet: () => set({ partnerSheetOpen: true }),
+      closePartnerSheet: () => set({ partnerSheetOpen: false }),
       showToast: (toast) => set({ toast }),
       clearToast: () => set({ toast: null }),
 

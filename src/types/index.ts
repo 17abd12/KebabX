@@ -34,7 +34,8 @@ export type CustomizationGroupId =
   | "bread"
   | "salads"
   | "sauces"
-  | "addons";
+  | "addons"
+  | "drink";
 
 export interface CustomizationGroup {
   id: CustomizationGroupId;
@@ -56,7 +57,12 @@ export interface MenuItem {
   /** Base price in AUD. */
   price: number;
   category: CategoryKey;
-  image: string;
+  /**
+   * Omitted when we have no photograph of this dish yet. The UI shows a branded
+   * "photo coming soon" tile rather than borrowing a stock shot of some other
+   * food — a pizza on the falafel card costs more trust than an empty tile.
+   */
+  image?: string;
   ingredients: string[];
   tags: DietaryTag[];
   spice: SpiceLevel;
@@ -76,7 +82,8 @@ export interface CartItem {
   lineId: string;
   itemId: string;
   name: string;
-  image: string;
+  /** Mirrors MenuItem.image; absent when the dish has no photo yet. */
+  image?: string;
   basePrice: number;
   quantity: number;
   selections: Selections;

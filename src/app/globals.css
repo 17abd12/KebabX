@@ -183,6 +183,29 @@ body {
   display: none;
 }
 
+/* Delivery partner buttons. Each sets --tint to its brand colour; the button
+   sits quietly in the obsidian palette at rest and takes the brand colour on
+   hover, so it reads as part of this site rather than a pasted-in ad. */
+.partner-btn {
+  border: 1px solid color-mix(in srgb, var(--tint) 34%, transparent);
+  background-color: color-mix(in srgb, var(--tint) 11%, transparent);
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.partner-btn:hover,
+.partner-btn:focus-visible {
+  border-color: var(--tint);
+  background-color: color-mix(in srgb, var(--tint) 20%, transparent);
+  box-shadow: 0 0 30px -10px var(--tint);
+  transform: translateY(-1px);
+}
+.partner-btn__mark {
+  background-color: var(--tint);
+}
+
 /* Animated conic border used on featured cards. */
 .glow-border {
   position: relative;

@@ -86,6 +86,7 @@ export function CartDrawer() {
   const clearCart = useCartStore((s) => s.clearCart);
   const placeOrder = useCartStore((s) => s.placeOrder);
   const setActiveCategory = useCartStore((s) => s.setActiveCategory);
+  const openPartnerSheet = useCartStore((s) => s.openPartnerSheet);
 
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -318,10 +319,19 @@ export function CartDrawer() {
                       {delivery ? "Delivery details" : "Pickup details"}
                     </h3>
 
-                    {!delivery && (
+                    {!delivery ? (
                       <p className="rounded-xl border border-white/8 bg-white/[0.025] px-3.5 py-2.5 text-xs text-zinc-400">
                         Collect from <span className="font-semibold text-zinc-200">{STORE.address}</span>
                       </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={openPartnerSheet}
+                        className="flex w-full items-center justify-between gap-2 rounded-xl border border-white/8 bg-white/[0.025] px-3.5 py-2.5 text-left text-xs text-zinc-400 transition-colors hover:border-ember/40 hover:text-zinc-200"
+                      >
+                        Prefer Uber Eats or DoorDash?
+                        <span className="font-semibold text-ember">View partners</span>
+                      </button>
                     )}
 
                     <Field

@@ -6,6 +6,38 @@ const FOCUSABLE =
   'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 /**
+ * Open dialogs, oldest first. The partner sheet can open on top of the cart
+ * drawer, so only the top of the stack may handle Escape and Tab — otherwise a
+ * single Escape would close both.
+ */
+const stack: symbol[] = [];
+
+/** Depth counter so a nested dialog closing does not unlock body scroll early. */
+let lockCount = 0;
+let restoreOverflow = "";
+let restorePadding = "";
+
+function lockScroll() {
+  const { body } = document;
+  if (lockCount === 0) {
+    const gap = window.innerWidth - document.documentElement.clientWidth;
+    restoreOverflow = body.style.overflow;
+    restorePadding = body.style.paddingRight;
+    body.style.overflow = "hidden";
+    if (gap > 0) body.style.paddingRight = `${gap}px`;
+  }
+  lockCount += 1;
+}
+
+function unlockScroll() {
+  lockCount = Math.max(0, lockCount - 1);
+  if (lockCount === 0) {
+    document.body.style.overflow = restoreOverflow;
+    document.body.style.paddingRight = restorePadding;
+  }
+}
+
+/**
  * Shared modal plumbing: scroll lock, Escape to close, initial focus and a
  * Tab-cycling focus trap. Returns the ref to attach to the dialog panel.
  */
@@ -16,15 +48,12 @@ export function useDialog(open: boolean, onClose: () => void) {
   useEffect(() => {
     if (!open) return;
 
-    restoreFocusTo.current = document.activeElement as HTMLElement | null;
+    const token = Symbol("dialog");
+    stack.push(token);
+    const isTopmost = () => stack[stack.length - 1] === token;
 
-    // Lock scroll without the layout jump from a disappearing scrollbar.
-    const { body } = document;
-    const gap = window.innerWidth - document.documentElement.clientWidth;
-    const prevOverflow = body.style.overflow;
-    const prevPadding = body.style.paddingRight;
-    body.style.overflow = "hidden";
-    if (gap > 0) body.style.paddingRight = `${gap}px`;
+    restoreFocusTo.current = document.activeElement as HTMLElement | null;
+    lockScroll();
 
     const focusTimer = window.setTimeout(() => {
       const panel = panelRef.current;
@@ -34,6 +63,8 @@ export function useDialog(open: boolean, onClose: () => void) {
     }, 60);
 
     const onKeyDown = (event: KeyboardEvent) => {
+      if (!isTopmost()) return;
+
       if (event.key === "Escape") {
         event.stopPropagation();
         onClose();
@@ -63,8 +94,9 @@ export function useDialog(open: boolean, onClose: () => void) {
     return () => {
       window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", onKeyDown);
-      body.style.overflow = prevOverflow;
-      body.style.paddingRight = prevPadding;
+      const index = stack.indexOf(token);
+      if (index !== -1) stack.splice(index, 1);
+      unlockScroll();
       restoreFocusTo.current?.focus?.({ preventScroll: true });
     };
   }, [open, onClose]);

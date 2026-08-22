@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import { ArrowRight, Flame, Leaf, ShieldCheck, Star, Timer } from "lucide-react";
-import { MENU, STORE } from "@/lib/data";
+import { CUTOUTS, MENU, STORE } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { OrderTypeSwitcher } from "@/components/OrderTypeSwitcher";
 import { SafeImage } from "@/components/SafeImage";
@@ -147,14 +147,20 @@ export function Hero() {
           <div className="animate-float-slow">
             <TiltCard intensity={13} lift={24}>
               <div className="glow-border glass-strong relative overflow-hidden rounded-4xl p-3 shadow-lift">
-                <div className="relative aspect-4/5 overflow-hidden rounded-[1.5rem] sm:aspect-square lg:aspect-4/5">
+                <div className="relative aspect-4/5 overflow-hidden rounded-[1.5rem] bg-linear-to-b from-obsidian-700 to-obsidian sm:aspect-square lg:aspect-4/5">
+                  {/* Ember pool the product sits in */}
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_42%,rgba(245,158,11,0.28),transparent_70%)]"
+                  />
+                  {/* Background-removed product shot, floating rather than filling */}
                   <SafeImage
-                    src={HERO_ITEM.image}
+                    src={CUTOUTS.hsp}
                     alt={HERO_ITEM.name}
                     fill
                     priority
                     sizes="(max-width: 1024px) 90vw, 45vw"
-                    className="object-cover"
+                    className="object-contain p-5 drop-shadow-[0_28px_40px_rgba(0,0,0,0.65)]"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-obsidian via-obsidian/25 to-transparent" />
 
