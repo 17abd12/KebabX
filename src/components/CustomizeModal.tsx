@@ -154,7 +154,7 @@ function ModalBody({ item, onClose }: { item: MenuItem; onClose: () => void }) {
       </div>
 
       {/* Scrollable options */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6">
         <p className="text-sm leading-relaxed text-zinc-400">{item.description}</p>
 
         <div className="mt-3 flex flex-wrap gap-1.5">

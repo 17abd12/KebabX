@@ -29,7 +29,7 @@ export function FloatingCartBar() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 90, opacity: 0 }}
           transition={{ type: "spring", stiffness: 320, damping: 30 }}
-          className="fixed inset-x-0 bottom-0 z-50 p-4 md:hidden"
+          className="pb-safe fixed inset-x-0 bottom-0 z-50 px-4 pt-4 md:hidden"
         >
           <button
             type="button"

@@ -158,7 +158,7 @@ function ConfirmationBody({ order, onClose }: { order: PlacedOrder; onClose: () 
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-2">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pb-2">
         <Timeline stageIndex={stageIndex} />
 
         <div className="mt-7 rounded-2xl border border-white/8 bg-white/[0.025] p-4">

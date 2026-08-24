@@ -2,18 +2,22 @@
 
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { ArrowRight, Flame, Leaf, ShieldCheck, Star, Timer } from "lucide-react";
-import { CUTOUTS, MENU, STORE } from "@/lib/data";
+import { ArrowRight, Building2, Flame, Leaf, ShieldCheck, Star, Timer } from "lucide-react";
+import { MENU, STORE } from "@/lib/data";
 import { useCartStore } from "@/lib/store";
 import { OrderTypeSwitcher } from "@/components/OrderTypeSwitcher";
-import { SafeImage } from "@/components/SafeImage";
+import Image from "next/image";
+import { PHOTOS } from "@/lib/content";
 import { TiltCard } from "@/components/TiltCard";
 import { formatAUD } from "@/lib/utils";
 
 // WebGL only exists in the browser, and the hero must paint without it.
 const HeroCanvas = dynamic(() => import("@/components/HeroCanvas"), { ssr: false });
 
-const HERO_ITEM = MENU.find((i) => i.id === "classic-hsp") ?? MENU[0];
+/** The showcase dish. Lamb doner, because it is the one item we have a
+ *  real, well-lit photograph of — a hero shot has to be the strongest image
+ *  on the site, not the highest-margin dish. */
+const HERO_ITEM = MENU.find((i) => i.id === "lamb-doner") ?? MENU[0];
 
 const TRUST = [
   { icon: ShieldCheck, label: "100% Halal Certified" },
@@ -36,7 +40,7 @@ export function Hero() {
   };
 
   return (
-    <section id="top" className="relative isolate overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24">
+    <section id="top" className="relative isolate overflow-hidden pt-24 pb-12 sm:pt-32 sm:pb-16">
       {/* Ambient ember field */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <HeroCanvas />
@@ -57,7 +61,7 @@ export function Hero() {
         <motion.div
           initial="hidden"
           animate="show"
-          transition={{ staggerChildren: 0.08, delayChildren: 0.05 }}
+          transition={{ staggerChildren: 0.07, delayChildren: 0.05 }}
           className="text-center lg:text-left"
         >
           <motion.div
@@ -66,16 +70,16 @@ export function Hero() {
             className="glass mx-auto inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-zinc-300 lg:mx-0"
           >
             <Star className="size-3.5 fill-gold text-gold" aria-hidden />
-            <span className="font-semibold text-zinc-100">{STORE.rating}</span>
-            <span className="text-zinc-500">({STORE.reviews} reviews)</span>
-            <span className="text-zinc-700">|</span>
-            <span>{STORE.address}</span>
+            <span className="font-semibold text-zinc-100 tabular">{STORE.rating}</span>
+            <span className="text-zinc-500 tabular">({STORE.reviews} reviews)</span>
+            <span className="hidden text-zinc-700 sm:inline">|</span>
+            <span className="hidden sm:inline">{STORE.address}</span>
           </motion.div>
 
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="font-display mt-6 text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl"
+            className="font-display mt-5 text-[2.6rem] leading-[1.03] font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl xl:text-[4.25rem]"
           >
             Elevated Street Food.
             <span className="text-gradient-ember block">Grilled to Perfection.</span>
@@ -84,7 +88,7 @@ export function Hero() {
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mx-auto mt-5 max-w-xl text-base text-pretty text-zinc-400 sm:text-lg lg:mx-0"
+            className="mx-auto mt-4 max-w-xl text-base text-pretty text-zinc-400 sm:text-lg lg:mx-0"
           >
             Twelve-hour marinades, charcoal skewers and snack packs built the proper way — carved
             to order at {STORE.shortAddress}. Pickup or delivery across {STORE.suburb}.
@@ -93,7 +97,7 @@ export function Hero() {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start"
+            className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start"
           >
             <button
               type="button"
@@ -118,7 +122,7 @@ export function Hero() {
           <motion.ul
             variants={fadeUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 lg:justify-start"
+            className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 lg:justify-start"
           >
             {TRUST.map(({ icon: Icon, label }) => (
               <li key={label} className="flex items-center gap-1.5 text-xs text-zinc-400">
@@ -131,10 +135,33 @@ export function Hero() {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mt-8 flex justify-center lg:justify-start"
+            className="mt-5 flex justify-center lg:justify-start"
           >
             <OrderTypeSwitcher />
           </motion.div>
+
+          {/* The B2B door, placed above the fold on desktop. A catering buyer who
+              has to scroll past a consumer menu to find you often does not. */}
+          <motion.a
+            variants={fadeUp}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            href="#catering"
+            className="glass-bone group mx-auto mt-6 flex w-full max-w-md items-center gap-3 rounded-2xl px-4 py-3 text-left transition-colors duration-200 hover:bg-white/8 lg:mx-0"
+          >
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/6 ring-1 ring-white/12">
+              <Building2 className="size-4 text-bone" aria-hidden />
+            </span>
+            <span className="flex-1">
+              <span className="block text-sm font-bold text-bone">Feeding a team?</span>
+              <span className="block text-xs text-bone-dim">
+                Per-head catering from $18.50 · 30-day invoicing
+              </span>
+            </span>
+            <ArrowRight
+              className="size-4 shrink-0 text-bone-dim transition-transform group-hover:translate-x-0.5"
+              aria-hidden
+            />
+          </motion.a>
         </motion.div>
 
         {/* ----------------------------- 3D showcase ---------------------------- */}
@@ -145,64 +172,89 @@ export function Hero() {
           className="relative mx-auto w-full max-w-md lg:max-w-none"
         >
           <div className="animate-float-slow">
-            <TiltCard intensity={13} lift={24}>
-              <div className="glow-border glass-strong relative overflow-hidden rounded-4xl p-3 shadow-lift">
-                <div className="relative aspect-4/5 overflow-hidden rounded-[1.5rem] bg-linear-to-b from-obsidian-700 to-obsidian sm:aspect-square lg:aspect-4/5">
-                  {/* Ember pool the product sits in */}
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_42%,rgba(245,158,11,0.28),transparent_70%)]"
-                  />
-                  {/* Background-removed product shot, floating rather than filling */}
-                  <SafeImage
-                    src={CUTOUTS.hsp}
-                    alt={HERO_ITEM.name}
+            <TiltCard intensity={11} lift={22}>
+              <div className="glow-border glass-2 relative overflow-hidden rounded-4xl p-2.5">
+                {/* The frame matches the hero crop's 3:2 aspect exactly. A taller
+                    frame crops into the filling and shows a close-up of onion
+                    rather than a kebab. */}
+                <div className="relative aspect-3/2 overflow-hidden rounded-3xl bg-obsidian-700">
+                  {/* The store's own photograph, filling the frame. A
+                      background-removed cutout floated here previously; the
+                      source has soft white sauce against a white bench, so the
+                      matte left a halo that read as a bad clipping job on the
+                      most important image on the site. */}
+                  <Image
+                    src={PHOTOS.heroDoner.src}
+                    alt={PHOTOS.heroDoner.alt}
                     fill
                     priority
-                    sizes="(max-width: 1024px) 90vw, 45vw"
-                    className="object-contain p-5 drop-shadow-[0_28px_40px_rgba(0,0,0,0.65)]"
+                    placeholder="blur"
+                    blurDataURL={PHOTOS.heroDoner.blur}
+                    sizes="(max-width: 1024px) 90vw, 46vw"
+                    className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-obsidian via-obsidian/25 to-transparent" />
 
-                  {/* Floating depth chips */}
+                  {/* Warm grade: the source is lit cool on marble, and dropping
+                      it straight onto an ember page reads as a pasted-in stock
+                      photo until the whites are pulled toward the palette. */}
                   <div
-                    className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-obsidian/70 px-3 py-1.5 text-[11px] font-bold text-ember backdrop-blur-md"
+                    aria-hidden
+                    className="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_40%,rgba(245,158,11,0.28),transparent_78%)] mix-blend-soft-light"
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-[radial-gradient(120%_100%_at_50%_45%,transparent_50%,rgba(9,8,10,0.55)_100%)]"
+                  />
+
+                  <div
+                    className="absolute top-3.5 left-3.5 flex items-center gap-1.5 rounded-full bg-obsidian/75 px-3 py-1.5 text-[11px] font-bold text-ember backdrop-blur-md"
                     style={{ transform: "translateZ(50px)" }}
                   >
                     <Flame className="size-3.5" aria-hidden />
                     HOUSE FAVOURITE
                   </div>
-                  <div
-                    className="absolute top-4 right-4 rounded-full bg-ember px-3 py-1.5 text-[11px] font-extrabold text-obsidian"
-                    style={{ transform: "translateZ(50px)" }}
-                  >
-                    {formatAUD(HERO_ITEM.price)}
-                  </div>
+                </div>
 
-                  <div
-                    className="absolute inset-x-4 bottom-4"
-                    style={{ transform: "translateZ(40px)" }}
-                  >
-                    <h2 className="font-display text-2xl font-extrabold tracking-tight">
+                {/* Caption sits on the glass rather than on the photo: the shot
+                    is bright and busy edge to edge, and any scrim heavy enough
+                    to make white text safe on it kills the food. */}
+                <div
+                  className="px-4 pt-5 pb-3"
+                  style={{ transform: "translateZ(40px)" }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <h2 className="font-display text-2xl font-extrabold tracking-tight text-balance">
                       {HERO_ITEM.name}
                     </h2>
-                    <p className="mt-1 line-clamp-2 text-sm text-zinc-300">
-                      {HERO_ITEM.description}
-                    </p>
+                    <span className="mt-0.5 shrink-0 rounded-full bg-ember px-3 py-1.5 text-xs font-extrabold text-obsidian tabular">
+                      {formatAUD(HERO_ITEM.price)}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-400">
+                    {HERO_ITEM.description}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-2.5">
                     <button
                       type="button"
                       onClick={() => openCustomize(HERO_ITEM.id)}
-                      className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-zinc-100 backdrop-blur-md transition-colors hover:bg-ember hover:text-obsidian"
+                      className="group/build inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-ember to-gold px-5 py-2.5 text-xs font-bold text-obsidian shadow-ember transition-transform duration-200 hover:scale-[1.03] active:scale-[0.98]"
                     >
                       Build yours
-                      <ArrowRight className="size-3.5" aria-hidden />
+                      <ArrowRight
+                        className="size-3.5 transition-transform group-hover/build:translate-x-0.5"
+                        aria-hidden
+                      />
                     </button>
+                    <span className="text-[11px] text-zinc-500">
+                      Carved to order · Ready in {STORE.pickupEta}
+                    </span>
                   </div>
                 </div>
               </div>
             </TiltCard>
           </div>
-
         </motion.div>
       </div>
     </section>

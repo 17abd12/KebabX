@@ -82,7 +82,7 @@ export function DeliveryPartnerSheet() {
               <OrderTypeSwitcher className="items-stretch" showEta={false} />
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-6 pb-2">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 pt-6 pb-2">
               <p className="font-display text-sm font-bold tracking-wide text-zinc-100 uppercase">
                 Order delivery with our partners
               </p>

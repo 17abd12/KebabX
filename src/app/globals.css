@@ -1,29 +1,60 @@
 @import "tailwindcss";
 
-@theme {
-  /* Obsidian base */
-  --color-obsidian: #0a0a0b;
-  --color-obsidian-800: #101012;
-  --color-obsidian-700: #16161a;
-  --color-char: #1c1c21;
+/* ==========================================================================
+ * Kebab X design system
+ *
+ * Two audiences share one surface. The B2C lane runs hot — ember gradients,
+ * motion, appetite. The B2B lane runs quiet — bone-white type, hairline rules,
+ * monospaced numbers — so a procurement manager does not feel sold to by a
+ * fast-food page. Both sit on the same warm-charcoal glass stack.
+ * ========================================================================== */
 
-  /* Fire */
+@theme {
+  /* --- Surfaces. Warm-neutral rather than pure grey: everything above it is
+     lit by ember, and a cold base makes that light read as dirty. --- */
+  --color-obsidian: #09080a;
+  --color-obsidian-800: #0f0e11;
+  --color-obsidian-700: #16141a;
+  --color-char: #1e1b22;
+
+  /* --- Fire: the B2C accent ramp. --- */
   --color-ember: #f59e0b;
   --color-ember-soft: #fbbf24;
   --color-gold: #eab308;
   --color-flame: #ea580c;
   --color-chilli: #ef4444;
 
+  /* --- Bone: the B2B accent. Deliberately not a colour — authority reads as
+     restraint, and it keeps catering visually separate from the menu. --- */
+  --color-bone: #f2ede3;
+  --color-bone-dim: #b8b0a2;
+
+  /* --- Status --- */
+  --color-open: #34d399;
+
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, "SF Mono", Menlo, monospace;
 
   --radius-4xl: 2rem;
+  --radius-5xl: 2.75rem;
+
+  /* --- Motion. One easing for entrances, one for exits: more than that and
+     the page stops feeling like a single object. --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
   --animate-ember-rise: ember-rise 9s linear infinite;
   --animate-shimmer: shimmer 2.6s linear infinite;
   --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
   --animate-float-slow: float-slow 7s ease-in-out infinite;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-sweep: sweep 3.5s var(--ease-in-out-quart) infinite;
 }
+
+/* --------------------------------------------------------------------------
+ * Keyframes
+ * ------------------------------------------------------------------------ */
 
 @keyframes ember-rise {
   0% {
@@ -70,9 +101,34 @@
   }
 }
 
+/* Halves the track, so the duplicated content loops seamlessly. */
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes sweep {
+  0%,
+  60%,
+  100% {
+    transform: translateX(-120%);
+  }
+  30% {
+    transform: translateX(120%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------ */
+
 :root {
   color-scheme: dark;
-  --scrollbar: #26262c;
+  --scrollbar: #2a262f;
 }
 
 html {
@@ -131,28 +187,96 @@ body {
   border-radius: 4px;
 }
 
+/* Touch behaviour, set once rather than per component.
+   `manipulation` drops the 300ms double-tap-to-zoom delay on every control,
+   and the tap highlight is tinted to the brand instead of the default blue
+   flash that iOS paints over dark surfaces. */
+button,
+a,
+label,
+summary,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(245 158 11 / 0.16);
+}
+
+/* Numbers that change in place — prices, ETAs, head counts — must not reflow
+   the layout around them as digits swap. */
+.tabular,
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
 /* --------------------------------------------------------------------------
- * Utilities
+ * Glass stack
+ *
+ * Three tiers, each a real material rather than a flat translucent fill:
+ * a top-lit gradient body, a 1px specular top edge (inset highlight), and a
+ * shadow that grounds it. Tier rises with the element's z-position, so a modal
+ * never reads as the same pane as the card behind it.
  * ------------------------------------------------------------------------ */
 
 @utility glass {
-  background-color: rgb(255 255 255 / 0.04);
-  border: 1px solid rgb(255 255 255 / 0.08);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02) 60%);
+  background-color: rgb(255 255 255 / 0.01);
+  border: 1px solid rgb(255 255 255 / 0.09);
+  backdrop-filter: blur(20px) saturate(130%);
+  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.1);
+}
+
+@utility glass-2 {
+  background-image: linear-gradient(160deg, rgb(255 255 255 / 0.085), rgb(255 255 255 / 0.025) 55%);
+  background-color: rgb(16 14 18 / 0.55);
+  border: 1px solid rgb(255 255 255 / 0.11);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.13),
+    0 24px 60px -32px rgb(0 0 0 / 0.9);
 }
 
 @utility glass-strong {
-  /* Kept high enough that content scrolling underneath the sticky bars never
+  /* Kept opaque enough that content scrolling underneath the sticky bars never
      ghosts through, including where backdrop-filter is unsupported. */
-  background-color: rgb(10 10 11 / 0.96);
+  background-color: rgb(9 8 10 / 0.94);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.06), transparent 70%);
   border: 1px solid rgb(255 255 255 / 0.1);
-  backdrop-filter: blur(28px) saturate(140%);
-  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  backdrop-filter: blur(28px) saturate(150%);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.08);
 }
+
+/* The B2B pane: same material, colder highlight, no ember bleed. Carries a
+   little more weight than tier 1 so a page of bone cards does not read as a
+   sequence of empty rectangles. */
+@utility glass-bone {
+  background-image: linear-gradient(160deg, rgb(242 237 227 / 0.1), rgb(242 237 227 / 0.03) 60%);
+  background-color: rgb(255 255 255 / 0.02);
+  border: 1px solid rgb(242 237 227 / 0.16);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 0 rgb(242 237 227 / 0.18),
+    0 20px 50px -34px rgb(0 0 0 / 0.9);
+}
+
+/* --------------------------------------------------------------------------
+ * Surface treatments
+ * ------------------------------------------------------------------------ */
 
 @utility text-gradient-ember {
   background-image: linear-gradient(120deg, #fef3c7 0%, #f59e0b 45%, #ea580c 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility text-gradient-bone {
+  background-image: linear-gradient(120deg, #ffffff 0%, #f2ede3 40%, #a89f8f 100%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -179,9 +303,46 @@ body {
   -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
 }
 
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+/* Section eyebrow — small caps label above every section heading. */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Film grain. Pure CSS via an inline SVG turbulence tile — no network request,
+   and it kills the banding that large dark gradients produce on cheap panels. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+}
+
+/* Hairline rule that fades at both ends — used to separate B2B blocks without
+   drawing a hard box around them. */
+.hairline {
+  height: 1px;
+  background-image: linear-gradient(to right, transparent, rgb(255 255 255 / 0.14), transparent);
+}
+
+/* --------------------------------------------------------------------------
+ * Components
+ * ------------------------------------------------------------------------ */
 
 /* Delivery partner buttons. Each sets --tint to its brand colour; the button
    sits quietly in the obsidian palette at rest and takes the brand colour on
@@ -238,4 +399,94 @@ body {
 .glow-border:focus-within::before,
 .glow-border[data-active="true"]::before {
   opacity: 1;
+}
+
+/* Fixed bottom bars have to clear the home indicator on notched phones. */
+@utility pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+/* Marquee track. The content is rendered twice; the keyframe scrolls exactly
+   half the track so the seam lands on an identical frame. */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: var(--animate-marquee);
+}
+
+/* The global reduced-motion rule collapses animation duration, which would snap
+   this track to its end frame. Stop it at the start instead so the first pass
+   of claims stays readable. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+.marquee-viewport:hover .marquee-track,
+.marquee-viewport:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Range input, restyled for the catering quote builder. Native track/thumb
+   pseudo-elements cannot be expressed as utilities, so they live here. */
+.range-ember {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 2.25rem;
+  background: transparent;
+  cursor: pointer;
+}
+.range-ember::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-ember) 0%,
+    var(--color-gold) var(--fill, 50%),
+    rgb(255 255 255 / 0.1) var(--fill, 50%)
+  );
+}
+.range-ember::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--color-ember) 0%,
+    var(--color-gold) var(--fill, 50%),
+    rgb(255 255 255 / 0.1) var(--fill, 50%)
+  );
+}
+.range-ember::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -0.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--color-ember);
+  box-shadow: 0 4px 16px -4px rgb(245 158 11 / 0.8);
+  transition: transform 0.15s ease;
+}
+.range-ember::-moz-range-thumb {
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--color-ember);
+  box-shadow: 0 4px 16px -4px rgb(245 158 11 / 0.8);
+}
+.range-ember:active::-webkit-slider-thumb {
+  transform: scale(1.12);
+}
+
+/* Accordion body. Height animation uses the interpolate-size opt-in where the
+   browser supports it, and simply snaps open where it does not. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
 }

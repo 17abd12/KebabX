@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const PARTICLE_COUNT = 900;
+// Tuned down from a denser field: past roughly 450 the embers stop reading as
+// heat rising off a grill and start reading as falling snow over the headline.
+const PARTICLE_COUNT = 420;
 const COLUMN_HEIGHT = 12;
 
 /**
@@ -76,7 +78,9 @@ const fragmentShader = /* glsl */ `
     vec3 color = mix(deep, mid, smoothstep(0.0, 0.6, vHeat));
     color = mix(color, hot, smoothstep(0.65, 1.0, vHeat));
 
-    float alpha = mask * vAlpha;
+    // Held well below 1 so the field stays behind the copy rather than
+    // competing with it — this layer is atmosphere, not content.
+    float alpha = mask * vAlpha * 0.62;
     if (alpha < 0.004) discard;
     gl_FragColor = vec4(color, alpha);
   }
@@ -117,7 +121,7 @@ function EmberField() {
 
       // Bias small: a few big embers read as sparks, the rest as smoke motes.
       const r = hash(i, 3);
-      scales[i] = 0.6 + r * r * 5.5;
+      scales[i] = 0.5 + r * r * 4.2;
       speeds[i] = 0.18 + hash(i, 4) * 0.55;
       offsets[i] = hash(i, 5) * 100;
       heats[i] = Math.pow(hash(i, 6), 1.6);

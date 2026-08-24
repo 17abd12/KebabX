@@ -123,3 +123,85 @@ export interface OrderState {
   customer: CustomerDetails;
   lastOrder: PlacedOrder | null;
 }
+
+/* --------------------------------------------------------------------------
+ * Marketing / catering content
+ * ------------------------------------------------------------------------ */
+
+/** Which lane a piece of content belongs to. */
+export type Audience = "b2c" | "b2b";
+
+export interface Photo {
+  src: string;
+  /** Inline base64 LQIP so hero imagery never flashes an empty box. */
+  blur: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+export interface CateringPackage {
+  id: string;
+  name: string;
+  /** One line a buyer can repeat to their boss. */
+  pitch: string;
+  /** AUD per head, GST inclusive. */
+  perHead: number;
+  minHeads: number;
+  includes: string[];
+  /** Marks the tier the layout leads with. */
+  recommended?: boolean;
+  /** Anchor tier — priced to make the recommended tier read as sensible. */
+  anchor?: boolean;
+}
+
+export interface CateringAddon {
+  id: string;
+  label: string;
+  /** AUD per head. */
+  perHead: number;
+  note?: string;
+}
+
+export interface Guarantee {
+  id: string;
+  title: string;
+  body: string;
+}
+
+export interface Step {
+  id: string;
+  title: string;
+  body: string;
+  /** Realistic elapsed time for this step, shown to compress perceived effort. */
+  duration: string;
+}
+
+export interface Testimonial {
+  id: string;
+  audience: Audience;
+  quote: string;
+  name: string;
+  /** Suburb for B2C, role + org type for B2B. */
+  context: string;
+  rating: 4 | 5;
+}
+
+export interface Faq {
+  id: string;
+  audience: Audience | "both";
+  question: string;
+  answer: string;
+}
+
+export interface CateringLead {
+  company: string;
+  contact: string;
+  email: string;
+  phone: string;
+  heads: number;
+  packageId: string;
+  addonIds: string[];
+  date: string;
+  notes: string;
+}

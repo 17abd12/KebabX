@@ -10,6 +10,9 @@ export const STORE = {
   rating: 4.5,
   reviews: 269,
   hours: "11:00am – 11:00pm, 7 days",
+  /** Placeholder catering inbox — swap for the real address before launch. */
+  cateringEmail: "catering@kebabx.com.au",
+  abn: "12 345 678 901",
   pickupEta: "15–20 mins",
   deliveryEta: "30–45 mins",
   pickupEtaMinutes: 18,
@@ -71,18 +74,19 @@ export const CATEGORIES: Category[] = [
 ];
 
 /**
- * Real store photography, cropped out of the supplied app screenshots and
- * served locally from /public/menu. The source frames are 739px wide, so these
- * are kept at native size rather than upscaled into fake detail.
+ * Dish photography, served locally from /public/menu.
+ *
+ * Two sources: frames cropped out of the store's own app screenshots (739px
+ * wide, kept at native size rather than upscaled into fake detail), and
+ * Pixabay-licensed stand-ins re-encoded to WebP for the dishes the store has
+ * not photographed yet.
+ *
+ * A dish with no honest match keeps `image` undefined and renders the branded
+ * fallback tile. Borrowing a photo of something else is worse than an empty
+ * box: it is the one thing on the card the customer can check against what
+ * arrives in the bag.
  */
 const shot = (slug: string) => `/menu/${slug}.webp`;
-
-/**
- * Placeholder photography for dishes we have no store photo of yet. Every id
- * below was checked to resolve on images.unsplash.com.
- */
-const img = (id: string) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=80`;
 
 /** Background-removed product cutouts, used floating on the dark hero. */
 export const CUTOUTS = {
@@ -222,7 +226,7 @@ export const MENU: MenuItem[] = [
       "Lemon-oregano chicken shaved thin, charred at the edges, finished with tabouli and a double hit of garlic.",
     price: 16.0,
     category: "kebabs",
-    image: img("1626700051175-6818013e1d4f"),
+    image: shot("chicken-doner"),
     ingredients: ["Chicken doner", "Warm pita", "Tabouli", "Cucumber", "Garlic sauce", "Lemon"],
     tags: ["Halal Certified"],
     spice: 0,
@@ -421,6 +425,7 @@ export const MENU: MenuItem[] = [
       "Lamb skewers, chicken shish and doner over saffron rice with grilled chilli, tomato and a trio of dips. Shares between two.",
     price: 38.9,
     category: "platters",
+    image: shot("mixed-grill"),
     ingredients: [
       "Lamb skewer",
       "Chicken shish",
@@ -470,6 +475,7 @@ export const MENU: MenuItem[] = [
       "Two skewers of char-grilled thigh fillet with smoked paprika, saffron rice, grilled veg and garlic yoghurt.",
     price: 26.5,
     category: "platters",
+    image: shot("chicken-shish"),
     ingredients: [
       "Chicken thigh skewers",
       "Smoked paprika",
@@ -533,6 +539,7 @@ export const MENU: MenuItem[] = [
       "Hummus, baba ghanoush and whipped garlic toum, whisked daily, with a stack of blistered pita.",
     price: 11.9,
     category: "sides",
+    image: shot("dip-trio"),
     ingredients: ["Hummus", "Baba ghanoush", "Garlic toum", "Olive oil", "Sumac", "Blistered pita"],
     tags: ["Vegetarian", "Vegan", "Halal Certified"],
     spice: 0,
@@ -566,6 +573,7 @@ export const MENU: MenuItem[] = [
       "Eight herb-flecked chickpea bites fried to order, dusted with sumac and served with tahini.",
     price: 10.5,
     category: "sides",
+    image: shot("falafel-bites"),
     ingredients: ["Chickpea falafel", "Parsley", "Coriander", "Sumac", "Tahini"],
     tags: ["Vegetarian", "Vegan", "Halal Certified"],
     spice: 0,
@@ -626,6 +634,7 @@ export const MENU: MenuItem[] = [
       "Layered filo, crushed Antep pistachio and orange-blossom syrup. Cut fresh, never soggy.",
     price: 9.5,
     category: "drinks",
+    image: shot("pistachio-baklava"),
     ingredients: ["Filo pastry", "Antep pistachio", "Butter", "Orange blossom syrup"],
     tags: ["Vegetarian"],
     spice: 0,

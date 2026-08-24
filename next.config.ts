@@ -9,16 +9,10 @@ const nextConfig: NextConfig = {
   output: "export",
 
   images: {
-    // Static export has no image optimizer at runtime, so serve the Unsplash
-    // URLs directly instead of routing them through /_next/image.
+    // Static export has no image optimizer at runtime. Every image is now a
+    // locally hosted, pre-sized WebP, so there is nothing to optimize and no
+    // remote host to allow-list.
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
-      },
-    ],
   },
 };
 
